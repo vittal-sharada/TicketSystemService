@@ -34,8 +34,8 @@ public class ShowController {
         @RequestMapping("/getShow/{showId}")
         @Timed( name = "shows.find.showId")
         @ExceptionMetered(name = "shows.find.showId.exception")
-        public Shows getShow(@PathVariable String showId) {
-                return ticketService.getShow(showId);
+        public Shows getShow(@PathVariable String showName) {
+                return ticketService.getShow(showName);
         }
 
         @RequestMapping(method = RequestMethod.POST, value="/addShows")

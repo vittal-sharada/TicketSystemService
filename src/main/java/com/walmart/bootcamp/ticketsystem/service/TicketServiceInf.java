@@ -31,12 +31,16 @@ public interface TicketServiceInf {
          * @return a reservation confirmation code
          */
          String reserveSeats(int seatHoldId, String customerEmail);
+
+
         List<Shows> getAllShows();
         void addShows(Shows show);
-        Shows getShow(String id);
+        Shows getShow(String showName);
 
         List<SeatHold> getAllSeats();
-        void addSeats(SeatHold show);
-        SeatHold getSeat(String seatId);
+        void addSeats(SeatHold seat);
+        SeatHold getSeat(Integer seatId);
+        String holdSeat(Integer seatId);
+        String reserveSeat(Integer seatId);
 
 }

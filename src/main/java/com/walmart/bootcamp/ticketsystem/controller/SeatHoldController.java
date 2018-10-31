@@ -29,9 +29,23 @@ public class SeatHoldController {
         }
 
         @RequestMapping("/getSeat/{seatId}")
-        @Timed( name = "seat.find.seatId")
-        @ExceptionMetered(name = "seat.find.seatId.exception")
-        public SeatHold getShow(@PathVariable String seatId) {
+        @Timed( name = "seat.get.seatId")
+        @ExceptionMetered(name = "seat.get.seatId.exception")
+        public SeatHold getSeat(@PathVariable Integer seatId) {
                 return ticketService.getSeat(seatId);
+        }
+
+        @RequestMapping("/holdSeat/{seatId}")
+        @Timed( name = "seat.hold.seatId")
+        @ExceptionMetered(name = "seat.hold.seatId.exception")
+        public void holdSeat(@PathVariable Integer seatId) {
+                ticketService.holdSeat(seatId);
+        }
+
+        @RequestMapping("/reserveSeat/{seatId}")
+        @Timed( name = "seat.reserve.seatId")
+        @ExceptionMetered(name = "seat.reserve.seatId.exception")
+        public void reserveSeat(@PathVariable Integer seatId) {
+                ticketService.reserveSeat(seatId);
         }
 }

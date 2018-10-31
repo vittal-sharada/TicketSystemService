@@ -7,12 +7,15 @@ INSERT into shows ( show_name, show_description) VALUES
 ('sh-6','Show 6'),
 ('sh-7','Show 7');
 
-INSERT into seats( seat_id, seat_rank, show_name ) VALUES
-(1, 1, 'sh-1'),
-(2, 1, 'sh-2'),
-(3, 5, 'sh-3'),
-(4, 5, 'sh-4'),
-(5, 5, 'sh-5');
+INSERT into seats( seat_id, customer_id, customer_email, show_id, reserved, hold ) VALUES
+(1, 1, 'sv1', 1, false, false),
+(2, 2, 'sv2', 1, false, false),
+(3, 3, 'sv3', 1, false, false),
+(4, 4, 'sv4', 2, false, false),
+(5, 5, 'sv5', 2, false, false);
+
+
+
 
 INSERT into customer (customer_email) VALUES
 ('svittal@walmart.com'),

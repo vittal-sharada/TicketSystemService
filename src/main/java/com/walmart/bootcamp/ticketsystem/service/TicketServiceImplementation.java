@@ -79,8 +79,8 @@ public class TicketServiceImplementation implements TicketServiceInf {
         }
 
         @Override
-        public Shows getShow(String showId) {
-                return (Shows) this.showsRepository.findOne(showId);
+        public Shows getShow(String showName) {
+                return  (Shows) this.showsRepository.findByShowName(showName);
         }
 
         @Override
@@ -91,13 +91,30 @@ public class TicketServiceImplementation implements TicketServiceInf {
         }
 
         @Override
-        public void addSeats(SeatHold show){
-                seatHoldRepository.save(show);
+        public void addSeats(SeatHold seat){
+                seatHoldRepository.save(seat);
         }
 
         @Override
-        public SeatHold getSeat(String seatId) {
+        public SeatHold getSeat(Integer seatId) {
                 return (SeatHold) this.seatHoldRepository.findOne(seatId);
+        }
+
+        @Override
+        public String holdSeat(Integer seatId) {
+                seatHoldRepository.resetSeatsHold(true, seatId);
+                String response = "{\"success\": true, \"message\": Show has been added successfully.}";
+                return response;
+
+        }
+
+
+        @Override
+        public String reserveSeat(Integer seatId) {
+                seatHoldRepository.resetSeatsReserved(true, seatId);
+                String response = "{\"success\": true, \"message\": Show has been added successfully.}";
+                return response;
+
         }
 
 }
