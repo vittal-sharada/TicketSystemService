@@ -3,4 +3,6 @@ target/
 test-output/
 .log
 .class
+TicketSystemService.iml
+
 
