@@ -1,8 +1,11 @@
 package com.walmart.bootcamp.ticketsystem.controller;
 
+import com.codahale.metrics.annotation.ExceptionMetered;
+import com.codahale.metrics.annotation.Timed;
 import com.walmart.bootcamp.ticketsystem.model.Shows;
 import com.walmart.bootcamp.ticketsystem.service.TicketServiceInf;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.codahale.metrics.annotation.ExceptionMetered;
-import com.codahale.metrics.annotation.Timed;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class ShowController {
         private TicketServiceInf ticketService;
 
         @RequestMapping("/getShows")
+        @ApiOperation(value = "/getShows")
         @Timed( name = "shows.find.all")
         @ExceptionMetered(name = "shows.find.all.exception")
         public List<Shows> getAllShows() {
