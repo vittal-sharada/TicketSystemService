@@ -35,4 +35,8 @@ public interface TicketServiceInf {
         void addShows(Shows show);
         Shows getShow(String id);
 
+        List<SeatHold> getAllSeats();
+        void addSeats(SeatHold show);
+        SeatHold getSeat(String seatId);
+
 }

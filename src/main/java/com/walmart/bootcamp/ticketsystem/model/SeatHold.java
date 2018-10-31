@@ -6,11 +6,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Data
@@ -18,14 +19,19 @@ import java.io.Serializable;
 @Table(name = "seats")
 public class SeatHold implements Serializable {
         private static final long serialVersionUID = -7893458373970990715L;
-        private static final Logger LOGGER = LoggerFactory.getLogger(Seats.class);
+        private static final Logger LOGGER = LoggerFactory.getLogger(SeatHold.class);
+
+        //@Id
+        //@GeneratedValue(strategy = GenerationType.IDENTITY)
+        //@Column(name = "show_seat_id", columnDefinition = "integer", nullable = false)
+        //private Long showSeatId;
+
+       // @Id
+       // @Column(name = "seat_id", nullable = false, columnDefinition = "integer")
 
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "show_seat_id", columnDefinition = "integer", nullable = false)
-        private Long showSeatId;
-
-        @Column(name = "seat_id", nullable = false, columnDefinition = "integer")
+        @Size(max = 30)
+        @Column(name = "seat_id", nullable = false, unique = true, length = 30, columnDefinition = "varchar")
         private Integer seatId;
 
         @Column(name = "seat_rank", nullable = false, columnDefinition = "integer")
@@ -37,10 +43,10 @@ public class SeatHold implements Serializable {
         @Column(name = "customer_id", nullable = false, columnDefinition = "integer")
         private Long customerId;*/
 
-        // @OneToMany( fetch = FetchType.LAZY)
-        @JoinColumn(name = "show_id", nullable = false)
+        @OneToOne( fetch = FetchType.LAZY)
+        @JoinColumn(name = "show_name", nullable = false)
         private Shows show;
 
-        @Column(name = "show_id", updatable = false, insertable = false, columnDefinition = "integer")
-        private Long showId;
+        @Column(name = "show_name", updatable = false, insertable = false, columnDefinition = "varchar")
+        private String showName;
 }

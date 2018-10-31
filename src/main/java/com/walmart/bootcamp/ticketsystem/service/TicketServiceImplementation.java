@@ -2,6 +2,7 @@ package com.walmart.bootcamp.ticketsystem.service;
 
 import com.walmart.bootcamp.ticketsystem.model.SeatHold;
 import com.walmart.bootcamp.ticketsystem.model.Shows;
+import com.walmart.bootcamp.ticketsystem.repository.SeatHoldRepository;
 import com.walmart.bootcamp.ticketsystem.repository.ShowsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class TicketServiceImplementation implements TicketServiceInf {
 
         @Autowired
         private ShowsRepository showsRepository;
+
+        @Autowired
+        private SeatHoldRepository seatHoldRepository;
 
         @Override
         public int numSeatsAvailable() {
@@ -67,7 +71,6 @@ public class TicketServiceImplementation implements TicketServiceInf {
                 List<Shows> shows = new ArrayList<Shows>();
                 showsRepository.findAll().forEach(shows::add);
                 return shows;
-
         }
 
         @Override
@@ -76,8 +79,25 @@ public class TicketServiceImplementation implements TicketServiceInf {
         }
 
         @Override
-        public Shows getShow(String id) {
-                return (Shows) this.showsRepository.findOne(id);
+        public Shows getShow(String showId) {
+                return (Shows) this.showsRepository.findOne(showId);
+        }
+
+        @Override
+        public List<SeatHold> getAllSeats() {
+                List<SeatHold> seats = new ArrayList<SeatHold>();
+                seatHoldRepository.findAll().forEach(seats::add);
+                return seats;
+        }
+
+        @Override
+        public void addSeats(SeatHold show){
+                seatHoldRepository.save(show);
+        }
+
+        @Override
+        public SeatHold getSeat(String seatId) {
+                return (SeatHold) this.seatHoldRepository.findOne(seatId);
         }
 
 }
