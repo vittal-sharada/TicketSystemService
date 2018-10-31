@@ -23,10 +23,10 @@ public class SeatHold implements Serializable {
         @Column(name = "seat_id", nullable = false, unique = true, length = 30, columnDefinition = "varchar")
         private Integer seatId;
 
-        @Column(name = "customer_id", nullable = false, columnDefinition = "integer")
+        @Column(name = "customer_id", columnDefinition = "integer")
         private Long customerId;
 
-        @Column(name = "customer_email", nullable = false, columnDefinition = "varchar")
+        @Column(name = "customer_email", columnDefinition = "varchar")
         private String customerEmail;
 
         @Column(name = "show_id", updatable = false, insertable = false, columnDefinition = "long")

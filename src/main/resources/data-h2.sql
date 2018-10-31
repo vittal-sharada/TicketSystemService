@@ -7,12 +7,12 @@ INSERT into shows ( show_name, show_description) VALUES
 ('sh-6','Show 6'),
 ('sh-7','Show 7');
 
-INSERT into seats( seat_id, customer_id, customer_email, show_id, reserved, hold ) VALUES
-(1, 1, 'sv1', 1, false, false),
-(2, 2, 'sv2', 1, false, false),
-(3, 3, 'sv3', 1, false, false),
-(4, 4, 'sv4', 2, false, false),
-(5, 5, 'sv5', 2, false, false);
+INSERT into seats( seat_id, show_id, reserved, hold ) VALUES
+(1, 1, false, false),
+(2, 1, false, false),
+(3, 1, false, false),
+(4, 2, false, false),
+(5, 2, false, false);
 
 
 

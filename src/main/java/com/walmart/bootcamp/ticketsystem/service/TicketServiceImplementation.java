@@ -117,4 +117,14 @@ public class TicketServiceImplementation implements TicketServiceInf {
 
         }
 
+        @Override
+        public void holdSeatCustomer(Integer seatId, Integer customerId, Integer customerEmail) {
+
+        }
+
+        @Override
+        public void reserveSeatCustomer(Integer seatId, Integer customerId, Integer customerEmail) {
+
+        }
+
 }
