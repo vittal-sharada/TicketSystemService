@@ -28,7 +28,14 @@ public class SeatHoldController {
                 return ticketService.getAllSeats();
         }
 
-        @RequestMapping("/getSeat/{seatId}")
+        @RequestMapping("/getSeatsAvailable")
+        @Timed( name = "seats.available.all")
+        @ExceptionMetered(name = "seats.available.exception")
+        public int numSeatsAvailable() {
+                return ticketService.numSeatsAvailable();
+        }
+/*
+        @RequestMapping("/getSeats/{seatId}")
         @Timed( name = "seat.get.seatId")
         @ExceptionMetered(name = "seat.get.seatId.exception")
         public SeatHold getSeat(@PathVariable Integer seatId) {
@@ -48,18 +55,19 @@ public class SeatHoldController {
         public void reserveSeat(@PathVariable Integer seatId) {
                 ticketService.reserveSeat(seatId);
         }
+*/
 
-        @RequestMapping("/holdSeat/{seatId}/customerId/{customerId}/customerEmail/{customerEmail}")
+        @RequestMapping("/holdSeat/{numSeats}/customerEmail/{customerEmail}")
         @Timed( name = "seat.hold.customer.seatId")
         @ExceptionMetered(name = "seat.hold.customer.seatId.exception")
-        public void holdSeatCustomer(@PathVariable Integer seatId, @PathVariable Integer customerId, @PathVariable Integer customerEmail) {
-                ticketService.holdSeatCustomer(seatId, customerId, customerEmail);
+        public void holdSeatCustomer(@PathVariable Integer numSeats, @PathVariable String customerEmail) throws IllegalAccessException {
+               ticketService.findAndHoldSeats(numSeats, customerEmail);
         }
 
-        @RequestMapping("/reserveSeat/{seatId}/customerId/{customerId}/customerEmail/{customerEmail}")
+        @RequestMapping("/reserveSeat/{numSeats}/customerId/{customerId}/customerEmail/{customerEmail}")
         @Timed( name = "seat.reserve.customer.seatId")
         @ExceptionMetered(name = "seat.reserve.customer.seatId.exception")
-        public void reserveSeatCustomer(@PathVariable Integer seatId, @PathVariable Integer customerId, @PathVariable Integer customerEmail) {
-                ticketService.reserveSeatCustomer(seatId,customerId, customerEmail);
+        public void reserveSeatCustomer(@PathVariable Integer numSeats, @PathVariable Integer customerId, @PathVariable Integer customerEmail) {
+                ticketService.reserveSeatCustomer(numSeats, customerId, customerEmail);
         }
 }

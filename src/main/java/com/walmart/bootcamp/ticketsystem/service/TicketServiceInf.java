@@ -21,7 +21,7 @@ public interface TicketServiceInf {
          * @param customerEmail unique identifier for the customer
          * @return a SeatHold object identifying the specific seats and related information
          */
-        SeatHold findAndHoldSeats(int numSeats, String customerEmail);
+        void findAndHoldSeats(int numSeats, String customerEmail) throws IllegalAccessException;
 
         /**
          * Commit seats held for a specific customer

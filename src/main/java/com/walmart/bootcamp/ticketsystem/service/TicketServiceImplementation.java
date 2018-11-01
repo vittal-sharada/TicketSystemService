@@ -1,11 +1,15 @@
 package com.walmart.bootcamp.ticketsystem.service;
 
+import com.codahale.metrics.annotation.Timed;
 import com.walmart.bootcamp.ticketsystem.model.SeatHold;
 import com.walmart.bootcamp.ticketsystem.model.Shows;
 import com.walmart.bootcamp.ticketsystem.repository.SeatHoldRepository;
 import com.walmart.bootcamp.ticketsystem.repository.ShowsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +31,7 @@ public class TicketServiceImplementation implements TicketServiceInf {
 
         @Override
         public int numSeatsAvailable() {
-          return 0;
+                return seatHoldRepository.numSeatsAvailable();
         }
 
         /**
@@ -38,20 +42,17 @@ public class TicketServiceImplementation implements TicketServiceInf {
          * @return a SeatHold object identifying the specific seats and related information
          */
         @Override
-        public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
+        public void findAndHoldSeats(int numSeats, String customerEmail) throws IllegalAccessException {
                 SeatHold sh = null;
-              /*  if(numSeats > availableSeats) {
-                      sh = new SeatHold(0);
-                      System.out.println(" more seats requested");
-                      return sh;
-                }
-                if(numSeats <= availableSeats) {
-                        sh = new SeatHold(numSeats, customerEmail);
-                        availableSeats = availableSeats - numSeats;
-                        System.out.println("seats available "+ sh.getHoldId());
-                }*/
 
-                return sh;
+               if(numSeats > numSeatsAvailable()) {
+                     throw new IllegalAccessException(" more seats requested");
+               }
+               if(numSeats <= numSeatsAvailable() ) {
+                       seatHoldRepository.resetSeatsHold( true, customerEmail, numSeats);
+               }
+
+               // return 20000;
         }
 
         /**
@@ -82,8 +83,9 @@ public class TicketServiceImplementation implements TicketServiceInf {
         public Shows getShow(String showName) {
                 return  (Shows) this.showsRepository.findByShowName(showName);
         }
-
+//////////////////////////////
         @Override
+
         public List<SeatHold> getAllSeats() {
                 List<SeatHold> seats = new ArrayList<SeatHold>();
                 seatHoldRepository.findAll().forEach(seats::add);
@@ -91,6 +93,8 @@ public class TicketServiceImplementation implements TicketServiceInf {
         }
 
         @Override
+        @Timed(name = "claim-service.create.claim")
+        @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRES_NEW)
         public void addSeats(SeatHold seat){
                 seatHoldRepository.save(seat);
         }
@@ -102,7 +106,7 @@ public class TicketServiceImplementation implements TicketServiceInf {
 
         @Override
         public String holdSeat(Integer seatId) {
-                seatHoldRepository.resetSeatsHold(true, seatId);
+                //seatHoldRepository.resetSeatsHold(true, seatId);
                 String response = "{\"success\": true, \"message\": Show has been added successfully.}";
                 return response;
 
