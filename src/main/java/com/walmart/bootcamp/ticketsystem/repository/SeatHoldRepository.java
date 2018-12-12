@@ -16,19 +16,29 @@ public interface SeatHoldRepository extends JpaRepository<SeatHold, Integer> {
         int resetSeatsHold(@Param("holdStatus") Boolean holdStatus, @Param("seatId") Integer seatId);*/
 
 
-        @Modifying
-        @Transactional
-        @Query("update SeatHold s set s.reserved = :reserveStatus where s.seatId = :seatId")
-        int resetSeatsReserved(@Param("reserveStatus") Boolean reserveStatus, @Param("seatId") Integer seatId);
+    //    @Modifying
+     //   @Transactional
+      //  @Query("update SeatHold s set s.reserved = :reserveStatus where s.seatId = :seatId")
+       // int resetSeatsReserved(@Param("reserveStatus") Boolean reserveStatus, @Param("seatId") Integer seatId);
 
 
-        @Query("select count(s.seatId) from SeatHold s where s.hold is false")
+        @Query("select count(s.seatId) from SeatHold s where s.hold is false and s.reserved is false")
         int numSeatsAvailable();
 
         @Modifying
         @Transactional
         @Query(nativeQuery = true, value = "update seats s set s.hold = :holdStatus, s.customer_email = :customerEmail where s.hold is false order by s.seat_id limit :numSeats" )
-        int resetSeatsHold( @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail , @Param("numSeats") Integer numSeats);
+        void resetSeatsHold( @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail , @Param("numSeats") Integer numSeats);
 
+        @Query(nativeQuery = true, value = "select s.reserved from seats s where s.customer_email = :customerEmail" )
+        Boolean checkSeatsHold( @Param("customerEmail") String customerEmail );
+
+        @Modifying
+        @Transactional
+        @Query(nativeQuery = true, value = "update seats s set s.reserved = :reservedStatus where s.customer_email = :customerEmail and s.hold = :holdStatus" )
+        void resetSeatsReserved( @Param("reservedStatus") Boolean reservedStatus, @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail);
+
+        @Query(nativeQuery = true, value = "select s.seat_id from seats s where s.customer_email = :customerEmail and s.reserved = :reservedStatus" )
+        String checkSeatsReserve( @Param("customerEmail") String customerEmail, @Param("reservedStatus") Boolean reservedStatus );
 
 }

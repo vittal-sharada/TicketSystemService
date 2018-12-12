@@ -1,10 +1,5 @@
 package com.walmart.bootcamp.ticketsystem.service;
 
-import com.walmart.bootcamp.ticketsystem.model.SeatHold;
-import com.walmart.bootcamp.ticketsystem.model.Shows;
-
-import java.util.List;
-
 public interface TicketServiceInf {
 
         /**
@@ -32,7 +27,7 @@ public interface TicketServiceInf {
          */
         String reserveSeats(int seatHoldId, String customerEmail);
 
-
+/*
         List<Shows> getAllShows();
 
         void addShows(Shows show);
@@ -52,4 +47,5 @@ public interface TicketServiceInf {
         void holdSeatCustomer(Integer seatId, Integer customerId, Integer customerEmail);
 
         void reserveSeatCustomer(Integer seatId, Integer customerId, Integer customerEmail);
+        */
 }

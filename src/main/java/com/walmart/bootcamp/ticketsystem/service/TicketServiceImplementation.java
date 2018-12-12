@@ -1,18 +1,14 @@
 package com.walmart.bootcamp.ticketsystem.service;
 
-import com.codahale.metrics.annotation.Timed;
 import com.walmart.bootcamp.ticketsystem.model.SeatHold;
-import com.walmart.bootcamp.ticketsystem.model.Shows;
 import com.walmart.bootcamp.ticketsystem.repository.SeatHoldRepository;
 import com.walmart.bootcamp.ticketsystem.repository.ShowsRepository;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Service
 public class TicketServiceImplementation implements TicketServiceInf {
@@ -22,7 +18,7 @@ public class TicketServiceImplementation implements TicketServiceInf {
          * @return the number of tickets available in the venue
          *
          */
-
+        private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(TicketServiceImplementation.class);
         @Autowired
         private ShowsRepository showsRepository;
 
@@ -44,15 +40,31 @@ public class TicketServiceImplementation implements TicketServiceInf {
         @Override
         public void findAndHoldSeats(int numSeats, String customerEmail) throws IllegalAccessException {
                 SeatHold sh = null;
+                FindAndHoldWaitTimer findAndHoldWaitTimer = new FindAndHoldWaitTimer();
 
-               if(numSeats > numSeatsAvailable()) {
-                     throw new IllegalAccessException(" more seats requested");
-               }
-               if(numSeats <= numSeatsAvailable() ) {
-                       seatHoldRepository.resetSeatsHold( true, customerEmail, numSeats);
-               }
+                if(numSeats > numSeatsAvailable()) {
+                     throw new IllegalAccessException("more seats requested");
+                }
+                if(numSeats <= numSeatsAvailable() ) {
+                        seatHoldRepository.resetSeatsHold(true, customerEmail, numSeats);
+                        TimerTask task = new TimerTask() {
+                                public void run() {
+                                        LOGGER.info("Started Hold Timer");
+                                }
+                        };
+                        Timer timer = new Timer();
+                        timer.schedule(task, 0);
 
-               // return 20000;
+                        TimerTask task2 = new TimerTask() {
+                                public void run() {
+                                        if(!seatHoldRepository.checkSeatsHold(customerEmail))
+                                        seatHoldRepository.resetSeatsHold(false, customerEmail, numSeats);
+                                }
+                        };
+                        Timer timer2 = new Timer();
+                        timer2.schedule(task2, 5000);
+
+                }
         }
 
         /**
@@ -64,9 +76,10 @@ public class TicketServiceImplementation implements TicketServiceInf {
          */
         @Override
         public String reserveSeats(int seatHoldId, String customerEmail) {
-                return "hi";
+                seatHoldRepository.resetSeatsReserved(true,true, customerEmail);
+                return String.valueOf(seatHoldRepository.checkSeatsReserve(customerEmail, true));
         }
-
+/*
         @Override
         public List<Shows> getAllShows() {
                 List<Shows> shows = new ArrayList<Shows>();
@@ -83,7 +96,7 @@ public class TicketServiceImplementation implements TicketServiceInf {
         public Shows getShow(String showName) {
                 return  (Shows) this.showsRepository.findByShowName(showName);
         }
-//////////////////////////////
+
         @Override
 
         public List<SeatHold> getAllSeats() {
@@ -129,6 +142,6 @@ public class TicketServiceImplementation implements TicketServiceInf {
         @Override
         public void reserveSeatCustomer(Integer seatId, Integer customerId, Integer customerEmail) {
 
-        }
+        }*/
 
 }

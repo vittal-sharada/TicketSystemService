@@ -33,8 +33,11 @@ public class SeatHoldController {
         @ExceptionMetered(name = "seats.available.exception")
         public int numSeatsAvailable() {
                 return ticketService.numSeatsAvailable();
-        }
-/*
+                }
+
+
+
+                /*
         @RequestMapping("/getSeats/{seatId}")
         @Timed( name = "seat.get.seatId")
         @ExceptionMetered(name = "seat.get.seatId.exception")
@@ -60,7 +63,7 @@ public class SeatHoldController {
         @RequestMapping("/holdSeat/{numSeats}/customerEmail/{customerEmail}")
         @Timed( name = "seat.hold.customer.seatId")
         @ExceptionMetered(name = "seat.hold.customer.seatId.exception")
-        public void holdSeatCustomer(@PathVariable Integer numSeats, @PathVariable String customerEmail) throws IllegalAccessException {
+        public void holdSeatCustomer(@PathVariable Integer numSeats, @PathVariable String customerEmail)throws IllegalAccessException {
                ticketService.findAndHoldSeats(numSeats, customerEmail);
         }
 
