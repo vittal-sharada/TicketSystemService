@@ -30,19 +30,21 @@ public class ShowController {
         @Timed( name = "shows.find.all")
         @ExceptionMetered(name = "shows.find.all.exception")
         public List<Shows> getAllShows() {
-                return ticketService.getAllShows();
+               // return ticketService.getAllShows();
+                return null;
         }
 
         @RequestMapping("/getShow/{showId}")
         @Timed( name = "shows.find.showId")
         @ExceptionMetered(name = "shows.find.showId.exception")
         public Shows getShow(@PathVariable String showName) {
-                return ticketService.getShow(showName);
+                //return ticketService.getShow(showName);
+                return null;
         }
 
         @RequestMapping(method = RequestMethod.POST, value="/addShows")
         public String addShows(@RequestBody Shows show) {
-                ticketService.addShows(show);
+               // ticketService.addShows(show);
                 String response = "{\"success\": true, \"message\": Show has been added successfully.}";
                 return response;
         }

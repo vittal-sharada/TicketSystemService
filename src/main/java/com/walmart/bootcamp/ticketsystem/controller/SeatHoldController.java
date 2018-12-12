@@ -25,7 +25,8 @@ public class SeatHoldController {
         @Timed( name = "seat.find.all")
         @ExceptionMetered(name = "seat.find.all.exception")
         public List<SeatHold> getAllSeats() {
-                return ticketService.getAllSeats();
+               // return ticketService.getAllSeats();
+                return null;
         }
 
         @RequestMapping("/getSeatsAvailable")
@@ -71,6 +72,6 @@ public class SeatHoldController {
         @Timed( name = "seat.reserve.customer.seatId")
         @ExceptionMetered(name = "seat.reserve.customer.seatId.exception")
         public void reserveSeatCustomer(@PathVariable Integer numSeats, @PathVariable Integer customerId, @PathVariable Integer customerEmail) {
-                ticketService.reserveSeatCustomer(numSeats, customerId, customerEmail);
+              //  ticketService.reserveSeatCustomer(numSeats, customerId, customerEmail);
         }
 }
