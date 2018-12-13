@@ -30,7 +30,14 @@ public interface SeatHoldRepository extends JpaRepository<SeatHold, Integer> {
         @Modifying
         @Transactional
         @Query(nativeQuery = true, value = "update seats s set s.hold = :holdStatus, s.customer_email = :customerEmail where s.hold is false order by s.seat_id limit :numSeats" )
-        void resetSeatsHold( @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail , @Param("numSeats") Integer numSeats);
+        int seatsHold( @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail , @Param("numSeats") Integer numSeats);
+
+        @Modifying
+        @Transactional
+        @Query(nativeQuery = true, value = "update seats s set s.hold = :holdStatus and s.customer_email = '' where s.customer_email = :customerEmail" )
+        int seatsHoldReset( @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail );
+
+
 
         @Query(nativeQuery = true, value = "select * from seats s where s.customer_email = :customerEmail" )
         List<SeatHold> checkSeatsHoldReserveStatus(@Param("customerEmail") String customerEmail );
@@ -38,7 +45,7 @@ public interface SeatHoldRepository extends JpaRepository<SeatHold, Integer> {
         @Modifying
         @Transactional
         @Query(nativeQuery = true, value = "update seats s set s.reserved = :reservedStatus where s.customer_email = :customerEmail and s.hold = :holdStatus" )
-        void resetSeatsReserved( @Param("reservedStatus") Boolean reservedStatus, @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail);
+        int seatsReserved( @Param("reservedStatus") Boolean reservedStatus, @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail);
 
        // @Query(nativeQuery = true, value = "select s.seat_id from seats s where s.customer_email = :customerEmail and s.reserved = :reservedStatus" )
         //String getSeatsReserve( @Param("customerEmail") String customerEmail, @Param("reservedStatus") Boolean reservedStatus );

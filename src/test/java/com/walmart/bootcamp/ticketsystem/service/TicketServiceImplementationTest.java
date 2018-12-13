@@ -38,13 +38,24 @@ public class TicketServiceImplementationTest {
                         ticketServiceImplementation.findAndHoldSeats(0,"");
                         ticketServiceImplementation.findAndHoldSeats(10,"sharada@gmail.com");
                         ticketServiceImplementation.findAndHoldSeats(2,"sharada@gmail.com");
-                        seatHoldList = seatHoldRepository.checkSeatsHoldReserveStatus("sharada@gmail.com");
 
-                       // Logger.getLogger(Level.ERROR);
+                        LOGGER.info("-----------Waiting 7 seconds----------");
+
+                        try {
+                                Thread.sleep(7000);
+                        } catch (InterruptedException e) {
+                                e.printStackTrace();
+                        }
+
+                        assertThat(ticketServiceImplementation.numSeatsAvailable()).isEqualTo(5);
+
+
                 } catch (IllegalAccessException e) {
                         e.printStackTrace();
                 }
         }
+
+
 
         @Test
         public void reserveSeats() {

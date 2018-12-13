@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
 @Service
 public class TicketServiceImplementation implements TicketServiceInf {
         /**
          * The number of seats in the venue that are neither held nor reserved
          *
          * @return the number of tickets available in the venue
-         *
          */
         private static final Logger LOGGER = LoggerFactory.getLogger(TicketServiceImplementation.class);
         @Autowired
@@ -28,82 +28,67 @@ public class TicketServiceImplementation implements TicketServiceInf {
 
         @Override
         public int numSeatsAvailable() {
-                if(seatHoldRepository !=null) {
-                        return seatHoldRepository.numSeatsAvailable();
+                int numSeats=0;
+                if (seatHoldRepository != null) {
+                        numSeats = seatHoldRepository.numSeatsAvailable();
+                        LOGGER.info("INFO: SeatsAvailable:"+ numSeats);
+                        return numSeats;
                 }
-                return 0;
+                return numSeats;
         }
 
         /**
          * Find and hold the best available seats for a customer
          *
-         * @param numSeats the number of seats to find and hold
+         * @param numSeats      the number of seats to find and hold
          * @param customerEmail unique identifier for the customer
          * @return a SeatHold object identifying the specific seats and related information
          */
 
-      /*  public boolean containsHold(Boolean holdStatus) {
-                List<SeatHold> seatHoldList =  seatHoldRepository.checkSeatsHoldReserveStatus("dd");
-                for(SeatHold o : this) {
-                        if (o != null && o.getHold().equals(true)) {
-                                return true;
-                        }
-                        return false;
-                }
-        } */
-
         @Override
         public void findAndHoldSeats(int numSeats, String customerEmail) throws IllegalAccessException {
-                List<SeatHold> seatHoldList ;
+                List<SeatHold> seatHoldList;
+                int availableSeats = numSeatsAvailable();
 
                 if (numSeats > 0 || !customerEmail.isEmpty()) {
-                        if (numSeats > numSeatsAvailable()) {
+                        if (numSeats > availableSeats) {
                                 LOGGER.error("ERROR: More seats requested than available");
-                        }
-                        else if (numSeats <= numSeatsAvailable()) {
-                                // set the status of hold in db to true
-                                seatHoldRepository.resetSeatsHold(true, customerEmail, numSeats);
+                        } else if (numSeats <= availableSeats) {
+                                LOGGER.info("INFO: Set the status of hold in db to true");
+                                int holdStatus = seatHoldRepository.seatsHold(true, customerEmail, numSeats);
 
                                 TimerTask startTimeTask = new TimerTask() {
                                         public void run() {
-                                                LOGGER.info("ERROR: Started Hold Timer");
+                                                LOGGER.info("INFO: Started Hold Timer");
                                         }
                                 };
 
-                                //If seat hold is true - start the timer
-                                seatHoldList = seatHoldRepository.checkSeatsHoldReserveStatus(customerEmail);
-                                if (seatHoldList != null) {
-                                LOGGER.info("SHARADA:"+ seatHoldList.size());
-                                        seatHoldList.stream().filter(SeatHold::getHold).forEach(s->System.out.println("Sharada---" +s.getHold()));
+                                LOGGER.info("INFO: If seat hold is true - start the timer");
+                                if (holdStatus == numSeats) {
+                                        Timer timer = new Timer();
+                                        timer.schedule(startTimeTask, 0);
 
-                                        if (seatHoldList.stream().filter(SeatHold::getHold).equals(true) &&
-                                                (long) seatHoldList.size() == numSeats) {
-
-                                                Timer timer = new Timer();
-                                                timer.schedule(startTimeTask, 0);
-
-                                                //Setup a task to run after 5mins
-                                                TimerTask endTimeTask = new TimerTask() {
-                                                        public void run() {
-                                                                // Check if seat is reserved after 5 seconds
-                                                                List<SeatHold> seatHoldEndTimerList = seatHoldRepository.checkSeatsHoldReserveStatus(customerEmail);
-                                                                if (seatHoldEndTimerList != null) {
-                                                                        if (seatHoldEndTimerList.stream().filter(SeatHold::getReserved).equals(false) &&
-                                                                                (long) seatHoldEndTimerList.size() == numSeats) {
-                                                                                seatHoldRepository.resetSeatsHold(false, customerEmail, numSeats);
-                                                                        }
-                                                                } else {
-                                                                        LOGGER.error("ERROR: SeatHold object is null while ending timer");
+                                        TimerTask endTimeTask = new TimerTask() {
+                                                public void run() {
+                                                        LOGGER.info("INFO: Check if seat is reserved after 5 seconds");
+                                                        List<SeatHold> seatHoldEndTimerList = seatHoldRepository.checkSeatsHoldReserveStatus(customerEmail);
+                                                        if (seatHoldEndTimerList != null) {
+                                                                if (checkReserveStatus(seatHoldEndTimerList) == 0) {
+                                                                       int resetHold =  seatHoldRepository.seatsHoldReset(false, customerEmail);
+                                                                       if(resetHold == numSeats) {
+                                                                               LOGGER.info("INFO: Ended Hold Timer");
+                                                                       }
+                                                                       else {
+                                                                               LOGGER.error("INFO: Ended Hold Timer, but something went wrong while updating DB");
+                                                                       }
                                                                 }
-
+                                                        } else {
+                                                                LOGGER.error("ERROR: SeatHold object is null while ending timer");
                                                         }
-                                                };
-
-                                                timer.schedule(endTimeTask, 5);
-
-                                        } else {
-                                                LOGGER.error("ERROR: Error occured while holding seats - not all seats are on hold ");
-                                        }
+                                                }
+                                        };
+                                        long delay = 5000;
+                                        timer.schedule(endTimeTask, delay);
 
                                 } else {
                                         LOGGER.error("ERROR: Error occured while holding seats - SeatHoldList is null");
@@ -112,23 +97,39 @@ public class TicketServiceImplementation implements TicketServiceInf {
                         } else {
                                 LOGGER.error("ERROR: Error occured while holding seats - Unable to get number of seats");
                         }
-                }
-                else {
+                } else {
                         LOGGER.error("ERROR: Error occured while holding seats - Email is null or number of seats is incorrect");
                 }
         }
 
+
+
+        private int checkReserveStatus(List<SeatHold> seatHoldEndTimerList) {
+                int reserved=0;
+
+                for( int i=0; i < seatHoldEndTimerList.size(); i++) {
+                        if( seatHoldEndTimerList.get(i).getReserved() ) {
+                                reserved = 1;
+                        } else {
+                                reserved = 0;
+                                break;
+                        }
+                }
+                LOGGER.info("Reservation status:"+ reserved);
+                return reserved;
+
+        }
         /**
          * Commit seats held for a specific customer
          *
-         * @param seatHoldId the seat hold identifier
+         * @param seatHoldId    the seat hold identifier
          * @param customerEmail the email address of the customer to which the seat hold is assigned
          * @return a reservation confirmation code
          */
         @Override
         public String reserveSeats(int seatHoldId, String customerEmail) {
-             //   seatHoldRepository.resetSeatsReserved(true,false, customerEmail, seatHoldId);
-              //  return String.valueOf(seatHoldRepository.checkSeatsReserve(customerEmail, true));
+                //   seatHoldRepository.resetSeatsReserved(true,false, customerEmail, seatHoldId);
+                //  return String.valueOf(seatHoldRepository.checkSeatsReserve(customerEmail, true));
                 return "abc";
         }
 /*
