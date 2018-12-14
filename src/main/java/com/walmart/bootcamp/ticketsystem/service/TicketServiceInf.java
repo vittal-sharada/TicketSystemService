@@ -1,5 +1,7 @@
 package com.walmart.bootcamp.ticketsystem.service;
 
+import com.walmart.bootcamp.ticketsystem.model.SeatHold;
+
 public interface TicketServiceInf {
 
         /**
@@ -16,7 +18,7 @@ public interface TicketServiceInf {
          * @param customerEmail unique identifier for the customer
          * @return a SeatHold object identifying the specific seats and related information
          */
-        void findAndHoldSeats(int numSeats, String customerEmail) throws IllegalAccessException;
+        SeatHold findAndHoldSeats(int numSeats, String customerEmail) throws IllegalAccessException;
 
         /**
          * Commit seats held for a specific customer
