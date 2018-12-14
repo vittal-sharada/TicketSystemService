@@ -10,68 +10,45 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @Api(value= "SeatHold Controller")
 @RestController
 public class SeatHoldController {
         private static final Logger LOGGER = LoggerFactory.getLogger(SeatHoldController.class);
+
         @Autowired
         private TicketServiceInf ticketService;
-
-        @RequestMapping("/getSeats")
-        @Timed( name = "seat.find.all")
-        @ExceptionMetered(name = "seat.find.all.exception")
-        public List<SeatHold> getAllSeats() {
-               // return ticketService.getAllSeats();
-                return null;
-        }
 
         @RequestMapping("/getSeatsAvailable")
         @Timed( name = "seats.available.all")
         @ExceptionMetered(name = "seats.available.exception")
         public int numSeatsAvailable() {
                 return ticketService.numSeatsAvailable();
+        }
+
+        @RequestMapping(value ="/holdSeat/{numSeats}/{customerEmail}", method = RequestMethod.POST)
+        @Timed( name = "seat.hold.numSeats")
+        @ExceptionMetered(name = "seat.hold.numSeats.exception")
+        public int holdSeat(@PathVariable Integer numSeats, @PathVariable String customerEmail) {
+
+                SeatHold sh = null;
+                try {
+                       sh =  ticketService.findAndHoldSeats(numSeats,customerEmail);
+                        sh.getSeatHoldId();
+                } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                 }
-
-
-
-                /*
-        @RequestMapping("/getSeats/{seatId}")
-        @Timed( name = "seat.get.seatId")
-        @ExceptionMetered(name = "seat.get.seatId.exception")
-        public SeatHold getSeat(@PathVariable Integer seatId) {
-                return ticketService.getSeat(seatId);
+                return sh.getSeatHoldId();
         }
 
-        @RequestMapping("/holdSeat/{seatId}")
-        @Timed( name = "seat.hold.seatId")
-        @ExceptionMetered(name = "seat.hold.seatId.exception")
-        public void holdSeat(@PathVariable Integer seatId) {
-                ticketService.holdSeat(seatId);
+        @RequestMapping(value ="/reserveSeat/{seatHoldId}/{customerEmail}", method = RequestMethod.POST)
+        @Timed( name = "seat.reserve.reserveSeat")
+        @ExceptionMetered(name = "seat.reserve.reserveSeat.exception")
+        public String reserveSeat(@PathVariable int seatHoldId, @PathVariable String customerEmail ) {
+                return  ticketService.reserveSeats(seatHoldId, customerEmail);
+
         }
 
-        @RequestMapping("/reserveSeat/{seatId}")
-        @Timed( name = "seat.reserve.seatId")
-        @ExceptionMetered(name = "seat.reserve.seatId.exception")
-        public void reserveSeat(@PathVariable Integer seatId) {
-                ticketService.reserveSeat(seatId);
-        }
-*/
-
-        @RequestMapping("/holdSeat/{numSeats}/customerEmail/{customerEmail}")
-        @Timed( name = "seat.hold.customer.seatId")
-        @ExceptionMetered(name = "seat.hold.customer.seatId.exception")
-        public void holdSeatCustomer(@PathVariable Integer numSeats, @PathVariable String customerEmail)throws IllegalAccessException {
-               ticketService.findAndHoldSeats(numSeats, customerEmail);
-        }
-
-        @RequestMapping("/reserveSeat/{numSeats}/customerId/{customerId}/customerEmail/{customerEmail}")
-        @Timed( name = "seat.reserve.customer.seatId")
-        @ExceptionMetered(name = "seat.reserve.customer.seatId.exception")
-        public void reserveSeatCustomer(@PathVariable Integer numSeats, @PathVariable Integer customerId, @PathVariable Integer customerEmail) {
-              //  ticketService.reserveSeatCustomer(numSeats, customerId, customerEmail);
-        }
 }

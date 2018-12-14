@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TicketServiceImplementationTest {
+public class TicketServiceImplementationIT {
 
         @Autowired
         private TicketServiceImplementation ticketServiceImplementation;
@@ -24,7 +24,7 @@ public class TicketServiceImplementationTest {
 
         private SeatHold sh = new SeatHold();
 
-        private static final Logger LOGGER = LoggerFactory.getLogger(TicketServiceImplementationTest.class);
+        private static final Logger LOGGER = LoggerFactory.getLogger(TicketServiceImplementationIT.class);
 
         @Test
         public void numSeatsAvailable() {
@@ -67,15 +67,15 @@ public class TicketServiceImplementationTest {
                         e.printStackTrace();
                 }
         }
-        
+
         @Test
         public void findAndHoldSeats() {
                 try {
                         sh  = ticketServiceImplementation.findAndHoldSeats(2,"sharada@gmail.com");
 
-                        LOGGER.info("-----------Waiting 7 seconds----------");
+                        LOGGER.info("-----------Waiting 20 seconds----------");
                         try {
-                                Thread.sleep(7000);
+                                Thread.sleep(20000);
                         } catch (InterruptedException e) {
                                 e.printStackTrace();
                         }
@@ -87,29 +87,9 @@ public class TicketServiceImplementationTest {
 
         @Test
         public void reserveSeats() {
+
+                //TODO
         }
 
-        @Test
-        public void getAllShows() {
-        }
 
-        @Test
-        public void addShows() {
-        }
-
-        @Test
-        public void getShow() {
-        }
-
-        @Test
-        public void getAllSeats() {
-        }
-
-        @Test
-        public void addSeats() {
-        }
-
-        @Test
-        public void getSeat() {
-        }
 }
