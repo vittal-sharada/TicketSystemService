@@ -12,7 +12,8 @@ public class SeatHold implements Serializable {
         private static final long serialVersionUID = -7893458373970990715L;
         private static final Logger LOGGER = LoggerFactory.getLogger(SeatHold.class);
 
-        ArrayList<Long> seatHoldIdlist;
-
-
+        Integer seatHoldId;
+        ArrayList<Integer> seatId;
+        String customerEmail;
+        String reservationId;
 }

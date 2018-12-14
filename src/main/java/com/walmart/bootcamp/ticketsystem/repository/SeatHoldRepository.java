@@ -18,12 +18,12 @@ public interface SeatHoldRepository extends JpaRepository<SeatHoldRequest, Integ
 
         @Modifying
         @Transactional
-        @Query(nativeQuery = true, value = "update seats s set s.hold = :holdStatus, s.customer_email = :customerEmail where s.hold is false order by s.seat_id limit :numSeats" )
-        int seatsHold( @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail , @Param("numSeats") Integer numSeats);
+        @Query(nativeQuery = true, value = "update seats s set s.hold = :holdStatus, s.customer_email = :customerEmail, s.seatHold_id =:seatHoldId where s.hold is false order by s.seat_id limit :numSeats" )
+        int seatsHold( @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail , @Param("seatHoldId") Integer seatHoldId, @Param("numSeats") Integer numSeats);
 
         @Modifying
         @Transactional
-        @Query(nativeQuery = true, value = "update seats s set s.hold = :holdStatus and s.customer_email = '' where s.customer_email = :customerEmail" )
+        @Query(nativeQuery = true, value = "update seats s set s.hold = :holdStatus and s.customer_email = '' and s.reserved = false where s.customer_email = :customerEmail" )
         int seatsHoldReset( @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail );
 
 
@@ -32,8 +32,8 @@ public interface SeatHoldRepository extends JpaRepository<SeatHoldRequest, Integ
 
         @Modifying
         @Transactional
-        @Query(nativeQuery = true, value = "update seats s set s.reserved = :reservedStatus where s.customer_email = :customerEmail and s.hold = :holdStatus" )
-        int seatsReserved( @Param("reservedStatus") Boolean reservedStatus, @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail);
+        @Query(nativeQuery = true, value = "update seats s set s.reserved = :reservedStatus, s.reservation_id = :reservationId  where s.customer_email = :customerEmail and s.hold = :holdStatus and s.seathold_id =:seatHoldId " )
+        int reserveSeatQuery(@Param("reservedStatus") Boolean reservedStatus, @Param("reservationId") String reservationId, @Param("holdStatus") Boolean holdStatus, @Param("customerEmail") String customerEmail, @Param("seatHoldId") int seatHoldId);
 
         //@Modifying
         //@Transactional

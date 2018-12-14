@@ -22,7 +22,6 @@ public class TicketServiceImplementationTest {
         @Autowired
         private SeatHoldRepository seatHoldRepository;
 
-        //@Autowired
         private SeatHold sh = new SeatHold();
 
         private static final Logger LOGGER = LoggerFactory.getLogger(TicketServiceImplementationTest.class);
@@ -33,33 +32,58 @@ public class TicketServiceImplementationTest {
         }
 
         @Test
-        public void findAndHoldSeats() {
-
+        public void findAndHoldSeatsWithZeroSeatAndEmptyEmail() {
                 try {
-                       // ticketServiceImplementation.findAndHoldSeats(0,"");
-                       // ticketServiceImplementation.findAndHoldSeats(10,"sharada@gmail.com");
-                       // ticketServiceImplementation.findAndHoldSeats(2,"sharada@gmail.com");
-                       sh  = ticketServiceImplementation.findAndHoldSeats(2,"sharada@gmail.com");
+                        sh = ticketServiceImplementation.findAndHoldSeats(0, "");
+                        assertThat(sh.getCustomerEmail()).isEqualTo(null);
+                        assertThat(sh.getSeatHoldId()).isEqualTo(null);
+                }
+                catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                }
+        }
 
-
-                        LOGGER.info("-----------Waiting 7 seconds----------");
-
-                        try {
-                                Thread.sleep(7000);
-                        } catch (InterruptedException e) {
-                                e.printStackTrace();
-                        }
-
-                        assertThat(ticketServiceImplementation.numSeatsAvailable()).isEqualTo(5);
-                        LOGGER.info("LIST:"+ sh.getSeatHoldIdlist().size());
-
-
-                } catch (IllegalAccessException e) {
+        @Test
+        public void findAndHoldSeatsWithMoreSeatsThanAvailable() {
+                try {
+                        sh = ticketServiceImplementation.findAndHoldSeats(10,"sharada@gmail.com");
+                        assertThat(sh.getCustomerEmail()).isEqualTo(null);
+                        assertThat(sh.getSeatHoldId()).isEqualTo(null);
+                }
+                catch (IllegalAccessException e) {
                         e.printStackTrace();
                 }
         }
 
 
+        @Test
+        public void findAndHoldSeatsAndReserve() {
+                try {
+                        sh  = ticketServiceImplementation.findAndHoldSeats(2,"sharada@gmail.com");
+                        String ff = ticketServiceImplementation.reserveSeats(sh.getSeatHoldId(), "sharada@gmail.com");
+                        assertThat(ticketServiceImplementation.numSeatsAvailable()).isEqualTo(3);
+                        assertThat(ff).isNotNull();
+                } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                }
+        }
+        
+        @Test
+        public void findAndHoldSeats() {
+                try {
+                        sh  = ticketServiceImplementation.findAndHoldSeats(2,"sharada@gmail.com");
+
+                        LOGGER.info("-----------Waiting 7 seconds----------");
+                        try {
+                                Thread.sleep(7000);
+                        } catch (InterruptedException e) {
+                                e.printStackTrace();
+                        }
+                        assertThat(ticketServiceImplementation.numSeatsAvailable()).isEqualTo(5);
+                } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                }
+        }
 
         @Test
         public void reserveSeats() {
