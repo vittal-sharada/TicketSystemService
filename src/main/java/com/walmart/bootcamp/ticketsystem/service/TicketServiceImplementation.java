@@ -66,7 +66,7 @@ public class TicketServiceImplementation implements TicketServiceInf {
 
                                         LOGGER.info("INFO: If seat hold is true - start the timer");
                                         if (holdStatus == numSeats) {
-                                                holdSeatForFiveSeconds(numSeats, customerEmail, 5000);
+                                                holdSeatForFiveSeconds(numSeats, customerEmail, 15000);
                                                 return seatHoldRequest(seatHold, customerEmail);
                                         } else {
                                                 LOGGER.error("ERROR: Error occured while holding seats - SeatHoldList is null");
@@ -159,14 +159,15 @@ public class TicketServiceImplementation implements TicketServiceInf {
                         LOGGER.info("SeatHoldId:"+ seatHoldId +"-"+"CustomerEmail:"+ customerEmail);
                         reservationId = UUID.randomUUID().toString();
                         int reserved = seatHoldRepository.reserveSeatQuery(true,reservationId,true, customerEmail, seatHoldId);
-                        LOGGER.info("res:"+ reserved+"-"+reservationId);
+
                         if(reserved > 1) {
                                 LOGGER.info("Reserved SeatHoldId:"+ seatHoldId );
+                                LOGGER.info("Your reservationId is:"+ reservationId );
                                 return reservationId;
                         }
                         else{
                                 LOGGER.info("Cannot Reserve SeatHoldId:"+ seatHoldId);
-                                reservationId = null;
+                                reservationId = "Cannot Reserve SeatHoldId:"+ seatHoldId;
                         }
                 }
                 return reservationId;
